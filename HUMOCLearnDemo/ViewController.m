@@ -55,7 +55,7 @@ void reportFunction(id self, SEL _cmd) {
     NSLog(@"Class is %@, and super is %@.", [self class], [self superclass]);
     Class currentClass = [self class];
     for (int i = 0; i < 5; i++) {
-        NSLog(@"Following the isa pointer %d times gives %@", i, currentClass);
+        NSLog(@"Following the isa pointer %d times gives %p", i, currentClass);
         currentClass = object_getClass(currentClass);
     }
     NSLog(@"NSObject's class is %p", [NSObject class]);
