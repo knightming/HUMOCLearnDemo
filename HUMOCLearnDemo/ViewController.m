@@ -37,10 +37,29 @@
     const char * nameChar = sel_getName(sel);
     NSString *nameString = [[NSString alloc] initWithCString:nameChar encoding:NSUTF8StringEncoding];
     NSLog(@"%@", nameString);
+    
+    Class newClass = objc_allocateClassPair([NSError class], "RuntimeErrorSubclass", 0);
+    class_addMethod(newClass, @selector(report), (IMP)reportFunction, "v@:");
+    objc_registerClassPair(newClass);
+    
+    id obj = [newClass new];
+    [obj performSelector:@selector(report)];
 }
 
 - (void)test {
     
+}
+
+void reportFunction(id self, SEL _cmd) {
+    NSLog(@"This class is %p.", self);
+    NSLog(@"Class is %@, and super is %@.", [self class], [self superclass]);
+    Class currentClass = [self class];
+    for (int i = 0; i < 5; i++) {
+        NSLog(@"Following the isa pointer %d times gives %@", i, currentClass);
+        currentClass = object_getClass(currentClass);
+    }
+    NSLog(@"NSObject's class is %p", [NSObject class]);
+    NSLog(@"NSObject's meta class is %p", object_getClass([NSObject class]));
 }
 
 @end
